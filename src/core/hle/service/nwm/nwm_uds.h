@@ -445,6 +445,8 @@ private:
      */
     void DecryptBeaconData(Kernel::HLERequestContext& ctx);
 
+    void SetProbeResponseParam(Kernel::HLERequestContext& ctx);
+
     ResultVal<std::shared_ptr<Kernel::Event>> Initialize(
         u32 sharedmem_size, const NodeInfo& node, u16 version,
         std::shared_ptr<Kernel::SharedMemory> sharedmem);
