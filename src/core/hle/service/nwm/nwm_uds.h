@@ -1,4 +1,5 @@
 // Copyright 2014 Citra Emulator Project
+// Copyright 2024 Jarrod Norwell
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
@@ -445,6 +446,20 @@ private:
      */
     void DecryptBeaconData(Kernel::HLERequestContext& ctx);
 
+    /**
+     * NWM_UDS:SetProbeResponseParam service function.
+     * Used before using NWM_UDS:CreateNetwork2.
+     *  Inputs:
+     *      0 : Header code [0x00100042]
+     *      1 : Size
+     *      2 : (Size<<14) | 0x1002
+     *      3 : Input buffer ptr
+     *  Outputs:
+     *      0 : Return header
+     *      1 : Result of function, 0 on success, otherwise error code
+     */
+    void SetProbeResponseParam(Kernel::HLERequestContext& ctx);
+
     ResultVal<std::shared_ptr<Kernel::Event>> Initialize(
         u32 sharedmem_size, const NodeInfo& node, u16 version,
         std::shared_ptr<Kernel::SharedMemory> sharedmem);
@@ -553,8 +568,8 @@ private:
     private:
         template <class Archive>
         void serialize(Archive& ar, const unsigned int) {
-            ar& connected;
-            ar& node_id;
+            ar & connected;
+            ar & node_id;
         }
         friend class boost::serialization::access;
     };
