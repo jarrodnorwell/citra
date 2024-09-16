@@ -1,4 +1,5 @@
 // Copyright 2017 Citra Emulator Project
+// Copyright 2024 Jarrod Norwell
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
@@ -31,9 +32,9 @@ namespace Service::NWM {
 template <class Archive>
 void NWM_UDS::serialize(Archive& ar, const unsigned int) {
     ar& boost::serialization::base_object<Kernel::SessionRequestHandler>(*this);
-    ar& node_map;
-    ar& connection_event;
-    ar& received_beacons;
+    ar & node_map;
+    ar & connection_event;
+    ar & received_beacons;
     // wifi_packet_received set in constructor
 }
 
@@ -1263,7 +1264,7 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int) {
         ar& boost::serialization::base_object<Kernel::HLERequestContext::WakeupCallback>(*this);
-        ar& command_id;
+        ar & command_id;
     }
     friend class boost::serialization::access;
 };
@@ -1427,7 +1428,7 @@ void NWM_UDS::DecryptBeaconData(Kernel::HLERequestContext& ctx) {
     rb.PushStaticBuffer(std::move(output_buffer), 0);
 }
 
-void NWM_UDS::SetProbeResponseParam(Kernel::HLERequestContext &ctx) {
+void NWM_UDS::SetProbeResponseParam(Kernel::HLERequestContext& ctx) {
     IPC::RequestParser rp(ctx);
 
     IPC::RequestBuilder rb = rp.MakeBuilder(1, 0);
