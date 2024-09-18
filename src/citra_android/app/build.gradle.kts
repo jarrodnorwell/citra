@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         applicationId = "com.antique.citra"
-        minSdk = 30
+        minSdk = 33
         targetSdk = 35
         versionCode = (((System.currentTimeMillis() / 1000) - 1451606400) / 10).toInt()
         versionName = getGitVersion()
