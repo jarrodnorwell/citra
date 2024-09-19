@@ -25,6 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import com.antique.citra.BuildConfig
 import com.antique.citra.Common
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -34,7 +38,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
-fun OnboardingScreen_Five(pagerState: PagerState) {
+fun OnboardingScreen_Five(pagerState: PagerState, preferences: DataStore<Preferences>) {
     val storageAllowed = Environment.isExternalStorageManager()
     val canProceed = remember { mutableStateOf(storageAllowed) }
     val launcher = rememberLauncherForActivityResult(StartActivityForResult()) { canProceed.value = Environment.isExternalStorageManager() }
@@ -54,7 +58,6 @@ fun OnboardingScreen_Five(pagerState: PagerState) {
                     .fillMaxWidth()
                     .padding(top = 100.dp),
                 fontSize = Common.titleFontSize.sp,
-                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             Spacer(
@@ -62,7 +65,7 @@ fun OnboardingScreen_Five(pagerState: PagerState) {
                     .padding(top = 10.dp)
             )
             Text(
-                text = "Citra will use your storage to create and manage the 3DS file system",
+                text = "Citra will use external storage to create and manage the 3DS file system",
                 modifier = Modifier
                     .fillMaxWidth(),
                 color = Color.Gray,
@@ -94,7 +97,13 @@ fun OnboardingScreen_Five(pagerState: PagerState) {
                             launcher.launch(Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, Uri.parse("package:${BuildConfig.APPLICATION_ID}")))
                         }
                         true -> {
-                            // TODO: set onboardingComplete=1, launch library screen
+                            GlobalScope.launch(Dispatchers.Main) {
+                                preferences.edit {
+                                    it[booleanPreferencesKey(name = "finishedStorage")] = true
+                                }
+                            }
+
+                            // TODO: launch library screen
                         }
                     }
                 },

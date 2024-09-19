@@ -1,5 +1,6 @@
 package com.antique.citra.onboarding
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,27 +16,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.antique.citra.Common
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+val Context.onboardingPreferences: DataStore<Preferences> by preferencesDataStore(name = "onboarding")
+
 @Composable
 fun OnboardingStart() {
     val pagerState = rememberPagerState(pageCount = { 5 })
 
+    val onboardingPreferences = LocalContext.current.onboardingPreferences
+
     HorizontalPager(pagerState) {
         when (it) {
             0 -> OnboardingScreen_One(pagerState) // Welcome
-            1 -> OnboardingScreen_Two(pagerState) // Notifications
-            2 -> OnboardingScreen_Three(pagerState) // Camera
-            3 -> OnboardingScreen_Four(pagerState) // Microphone
-            4 -> OnboardingScreen_Five(pagerState)
+            1 -> OnboardingScreen_Two(pagerState, onboardingPreferences) // Notifications
+            2 -> OnboardingScreen_Three(pagerState, onboardingPreferences) // Camera
+            3 -> OnboardingScreen_Four(pagerState, onboardingPreferences) // Microphone
+            4 -> OnboardingScreen_Five(pagerState, onboardingPreferences) // Storage
         }
     }
 }
@@ -58,7 +66,6 @@ fun OnboardingScreen_One(pagerState: PagerState) {
                     .fillMaxWidth()
                     .padding(top = 100.dp),
                 fontSize = Common.titleFontSize.sp,
-                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             Spacer(

@@ -24,6 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import com.antique.citra.Common
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -32,9 +36,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
-fun OnboardingScreen_Three(pagerState: PagerState) {
-    val notificationsAllowed = LocalContext.current.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-    val canProceed = remember { mutableStateOf(notificationsAllowed) }
+fun OnboardingScreen_Three(pagerState: PagerState, preferences: DataStore<Preferences>) {
+    val cameraAllowed = LocalContext.current.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    val canProceed = remember { mutableStateOf(cameraAllowed) }
     val launcher = rememberLauncherForActivityResult(RequestPermission()) { canProceed.value = it }
 
     Scaffold(
@@ -52,7 +56,6 @@ fun OnboardingScreen_Three(pagerState: PagerState) {
                     .fillMaxWidth()
                     .padding(top = 100.dp),
                 fontSize = Common.titleFontSize.sp,
-                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             Spacer(
@@ -93,6 +96,10 @@ fun OnboardingScreen_Three(pagerState: PagerState) {
                         }
                         true ->
                             GlobalScope.launch(Dispatchers.Main) {
+                                preferences.edit {
+                                    it[booleanPreferencesKey(name = "finishedCamera")] = true
+                                }
+
                                 pagerState.scrollToPage(page = pagerState.currentPage + 1)
                             }
                     }
